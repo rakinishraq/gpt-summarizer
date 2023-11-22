@@ -37,6 +37,8 @@ from pdfminer.pdfpage import PDFPage
 
 import html2text
 
+tmp_dir = os.getenv("TEMP")+'\\' if os.name=="nt" else "/tmp/"
+
 def extract_text_from_pdf(pdf_path):
     """Extracts the text from a PDF file and returns it as a string.
 
@@ -279,7 +281,7 @@ def generate_summary(content, prompt, model_engine="text-davinci-003", max_token
 
 def extract_text_from_html(html_path):
     # Read the HTML file
-    with open(html_path, "r") as html_file:
+    with open(html_path, "r", encoding="utf8") as html_file:
         html = html_file.read()
     
     # Extract the text from the HTML
@@ -342,9 +344,9 @@ def download_html(url):
 
     # Download the HTML file
     if base_name.endswith(".pdf"):
-        html_path = "/tmp/" + base_name
+        html_path = tmp_dir + base_name
     else:
-        html_path = "/tmp/" + base_name + ".html"
+        html_path = tmp_dir + base_name + ".html"
     print("HTML path: " + html_path)
     print("URL: " + url)
     os.system("curl -s -o " + html_path + " " + url)
@@ -375,7 +377,7 @@ if __name__ == '__main__':
         # Strip any trailing /'s from the end of the URL
         url = url.rstrip("/")
         # Set the base_name to a /tmp file containing the last part of the URL between /'s
-        base_name = "/tmp/" + url.split("/")[-1]
+        base_name = tmp_dir + url.split("/")[-1]
         print(base_name)
 
         if sys.argv[1].endswith(".pdf"):
